@@ -528,7 +528,9 @@ final class CardImage {
 			return $source;
 		}
 
-		$avatar_url = get_avatar_url( $author_id, array( 'size' => 256 ) );
+		// default => 404 so Gravatar 404s (instead of returning the "mystery person"
+		// placeholder) when the author has no avatar, letting the site default below apply.
+		$avatar_url = get_avatar_url( $author_id, array( 'size' => 256, 'default' => '404' ) );
 		if ( is_string( $avatar_url ) && '' !== $avatar_url ) {
 			$source = $this->remote_avatar( $avatar_url );
 			if ( $source ) {
