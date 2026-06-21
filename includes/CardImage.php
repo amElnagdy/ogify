@@ -82,18 +82,20 @@ final class CardImage {
 			$reading_label = sprintf( _n( '%d min read', '%d min read', 3, 'ogify' ), 3 );
 
 			$data = array(
-				'post_id'       => 0,
-				'title'         => $this->sanitize_drawn_text( $title ),
-				'reading_label' => $this->uppercase( $reading_label ),
-				'author_name'   => $this->sanitize_drawn_text( $user_name ),
-				'site_name'     => $this->resolve_site_name( $settings ),
-				'avatar'        => $avatar,
-				'settings'      => $settings,
-				'dir'           => $cache_dir,
-				'path'          => trailingslashit( $cache_dir ) . $filename,
-				'url'           => rtrim( $upload_dir['baseurl'], '/' ) . '/ogify/' . $filename,
-				'bold_font'     => OGIFY_PATH . 'assets/fonts/Inter-Bold.ttf',
-				'regular_font'  => OGIFY_PATH . 'assets/fonts/Inter-Regular.ttf',
+				'post_id'           => 0,
+				'title'             => $this->sanitize_drawn_text( $title ),
+				'reading_label'     => $this->uppercase( $reading_label ),
+				'reading_time_text' => $reading_label,
+				'author_name'       => $this->sanitize_drawn_text( $user_name ),
+				'site_name'         => $this->resolve_site_name( $settings ),
+				'avatar'            => $avatar,
+				'settings'          => $settings,
+				'dir'               => $cache_dir,
+				'path'              => trailingslashit( $cache_dir ) . $filename,
+				'url'               => rtrim( $upload_dir['baseurl'], '/' ) . '/ogify/' . $filename,
+				'bold_font'         => OGIFY_PATH . 'assets/fonts/Inter-Bold.ttf',
+				'extrabold_font'    => OGIFY_PATH . 'assets/fonts/Inter-ExtraBold.ttf',
+				'regular_font'      => OGIFY_PATH . 'assets/fonts/Inter-Regular.ttf',
 			);
 
 			return $this->render_to_file( $data ) ? $data['url'] : '';
@@ -160,21 +162,24 @@ final class CardImage {
 			return false;
 		}
 
-		$filename = $post_id . '-' . $hash . '.png';
+		$filename      = $post_id . '-' . $hash . '.png';
+		$reading_label = ReadingTime::label( $post_id );
 
 		return array(
-			'post_id'         => $post_id,
-			'title'           => $this->sanitize_drawn_text( (string) $post->post_title ),
-			'reading_label'   => $this->uppercase( ReadingTime::label( $post_id ) ),
-			'author_name'     => $this->sanitize_drawn_text( $author_name ),
-			'site_name'       => $this->resolve_site_name( $settings ),
-			'avatar'          => $avatar,
-			'settings'        => $settings,
-			'dir'             => $cache_dir,
-			'path'            => trailingslashit( $cache_dir ) . $filename,
-			'url'             => rtrim( $upload_dir['baseurl'], '/' ) . '/ogify/' . $filename,
-			'bold_font'       => OGIFY_PATH . 'assets/fonts/Inter-Bold.ttf',
-			'regular_font'    => OGIFY_PATH . 'assets/fonts/Inter-Regular.ttf',
+			'post_id'           => $post_id,
+			'title'             => $this->sanitize_drawn_text( (string) $post->post_title ),
+			'reading_label'     => $this->uppercase( $reading_label ),
+			'reading_time_text' => $reading_label,
+			'author_name'       => $this->sanitize_drawn_text( $author_name ),
+			'site_name'         => $this->resolve_site_name( $settings ),
+			'avatar'            => $avatar,
+			'settings'          => $settings,
+			'dir'               => $cache_dir,
+			'path'              => trailingslashit( $cache_dir ) . $filename,
+			'url'               => rtrim( $upload_dir['baseurl'], '/' ) . '/ogify/' . $filename,
+			'bold_font'         => OGIFY_PATH . 'assets/fonts/Inter-Bold.ttf',
+			'extrabold_font'    => OGIFY_PATH . 'assets/fonts/Inter-ExtraBold.ttf',
+			'regular_font'      => OGIFY_PATH . 'assets/fonts/Inter-Regular.ttf',
 		);
 	}
 
@@ -192,17 +197,25 @@ final class CardImage {
 
 		imagealphablending( $image, true );
 		imagesavealpha( $image, true );
+
+		$layouts        = $this->layouts();
+		$key            = isset( $data['settings']['template'] ) ? (string) $data['settings']['template'] : 'classic';
+		$data['layout'] = isset( $layouts[ $key ] ) ? $layouts[ $key ] : $layouts['classic'];
+
 		$this->draw_background( $image, $data['settings'] );
 
-		if ( ! empty( $data['settings']['show_reading_time'] ) && ! $this->draw_badge( $image, $data ) ) {
+		$want_badge = ! empty( $data['settings']['show_reading_time'] ) && 'tag' === $data['layout']['badge'];
+		if ( $want_badge && ! $this->draw_badge( $image, $data ) ) {
 			imagedestroy( $image );
 			return false;
 		}
 
-		if ( ! $this->draw_title( $image, $data ) ) {
+		$title_block = $this->draw_title( $image, $data );
+		if ( false === $title_block ) {
 			imagedestroy( $image );
 			return false;
 		}
+		$data['title_block'] = $title_block;
 
 		if ( ! $this->draw_author_chip( $image, $data ) ) {
 			imagedestroy( $image );
@@ -252,6 +265,40 @@ final class CardImage {
 	}
 
 	/**
+	 * Get template layout scalars.
+	 *
+	 * @return array
+	 */
+	private function layouts(): array {
+		return array(
+			'classic'  => array(
+				'align'        => 'left',
+				'badge'        => 'tag',
+				'accent_bar'   => false,
+				'title_anchor' => 'top',
+				'title_sizes'  => array( 76, 68, 60 ),
+				'byline'       => 'chip',
+			),
+			'centered' => array(
+				'align'        => 'center',
+				'badge'        => 'tag',
+				'accent_bar'   => false,
+				'title_anchor' => 'top',
+				'title_sizes'  => array( 64, 58, 52 ),
+				'byline'       => 'chip',
+			),
+			'minimal'  => array(
+				'align'        => 'left',
+				'badge'        => 'none',
+				'accent_bar'   => true,
+				'title_anchor' => 'middle',
+				'title_sizes'  => array( 88, 78, 68 ),
+				'byline'       => 'meta',
+			),
+		);
+	}
+
+	/**
 	 * Draw the configured background.
 	 *
 	 * @param resource|\GdImage $image Image resource.
@@ -288,67 +335,93 @@ final class CardImage {
 	 * @return bool
 	 */
 	private function draw_badge( $image, array $data ): bool {
+		$layout     = $data['layout'];
 		$font       = $data['bold_font'];
 		$text       = $data['reading_label'];
-		$font_size  = 24;
+		$font_size  = 22;
 		$text_width = $this->text_width( $text, $font, $font_size );
-		$x          = self::PADDING;
-		$y          = 70;
-		$height     = 46;
-		$width      = $text_width + 44;
+		$height     = 44;
+		$width      = $text_width + 36;
+		$x          = $this->anchor_x( $layout['align'], $width );
+		$y          = 72;
 		$bg         = $this->allocate_hex_color( $image, $data['settings']['accent_color'] );
 		$text_rgb   = $this->badge_text_rgb( $data['settings']['accent_color'] );
 		$text_color = $this->allocate_rgb_color( $image, $text_rgb );
 		$bbox       = $this->text_bbox( $text, $font, $font_size );
 		$baseline   = (int) round( $y + ( ( $height - $this->bbox_height( $bbox ) ) / 2 ) - $this->bbox_min_y( $bbox ) );
 
-		$this->draw_pill( $image, $x, $y, $width, $height, $bg );
+		if ( ! imagefilledrectangle( $image, $x, $y, $x + $width - 1, $y + $height - 1, $bg ) ) {
+			return false;
+		}
 
-		return $this->draw_text( $image, $text, $font_size, $x + 22, $baseline, $text_color, $font );
+		return $this->draw_text( $image, $text, $font_size, $x + 18, $baseline, $text_color, $font );
 	}
 
 	/**
-	 * Draw the title block and return whether GD accepted the text.
+	 * Draw the title block and return its measured geometry.
 	 *
 	 * @param resource|\GdImage $image Image resource.
 	 * @param array             $data Resolved render data.
-	 * @return bool
+	 * @return array|false
 	 */
-	private function draw_title( $image, array $data ): bool {
-		$font        = $data['bold_font'];
+	private function draw_title( $image, array $data ) {
+		$layout      = $data['layout'];
+		$align       = $layout['align'];
+		$font        = is_readable( $data['extrabold_font'] ) ? $data['extrabold_font'] : $data['bold_font'];
 		$title       = $data['title'];
 		$text_color  = $this->allocate_hex_color( $image, $data['settings']['text_color'] );
 		$shadow      = $this->allocate_rgb_color( $image, array( 'r' => 0, 'g' => 0, 'b' => 0 ), 62 );
-		$font_size   = 64;
-		$title_top   = ! empty( $data['settings']['show_reading_time'] ) ? 176 : 120;
-		$line_height = 76;
+		$sizes        = $layout['title_sizes'];
+		$last_size    = $sizes[ count( $sizes ) - 1 ];
+		$font_size    = $sizes[0];
+		$line_height  = (int) round( $font_size * 1.18 );
+		$lines        = array();
+		$total_height = 0;
 
-		foreach ( array( 64, 60, 56 ) as $size ) {
+		foreach ( $sizes as $size ) {
 			list( $lines, $total_height ) = $this->measure_title_block( $title, $font, $size, self::TITLE_WIDTH, 3 );
-			$font_size                    = $size;
-			$line_height                  = (int) round( $size * 1.18 );
+			$font_size   = $size;
+			$line_height = (int) round( $size * 1.18 );
 
-			if ( ! $this->has_ellipsis( $lines ) || 56 === $size ) {
+			if ( ! $this->has_ellipsis( $lines ) || $last_size === $size ) {
 				break;
+			}
+		}
+
+		if ( 'middle' === $layout['title_anchor'] ) {
+			$title_top = max( 96, (int) round( ( self::HEIGHT - 150 - $total_height ) / 2 ) );
+		} else {
+			$has_badge = ! empty( $data['settings']['show_reading_time'] ) && 'tag' === $layout['badge'];
+			if ( 'center' === $align ) {
+				$title_top = $has_badge ? 150 : 120;
+			} else {
+				$title_top = $has_badge ? 190 : 130;
+			}
+		}
+
+		if ( ! empty( $layout['accent_bar'] ) ) {
+			$bar_y = $title_top - 28;
+			$bar   = $this->allocate_hex_color( $image, $data['settings']['accent_color'] );
+			if ( ! imagefilledrectangle( $image, self::PADDING, $bar_y, self::PADDING + 83, $bar_y + 7, $bar ) ) {
+				return false;
 			}
 		}
 
 		$needs_shadow = $this->needs_title_shadow( $data['settings'] );
 		foreach ( $lines as $index => $line ) {
 			$baseline = $title_top + $font_size + ( $index * $line_height );
+			$x        = $this->anchor_x( $align, $this->text_width( $line, $font, $font_size ) );
 
-			if ( $needs_shadow && ! $this->draw_text( $image, $line, $font_size, self::PADDING + 1, $baseline + 1, $shadow, $font ) ) {
+			if ( $needs_shadow && ! $this->draw_text( $image, $line, $font_size, $x + 1, $baseline + 1, $shadow, $font ) ) {
 				return false;
 			}
 
-			if ( ! $this->draw_text( $image, $line, $font_size, self::PADDING, $baseline, $text_color, $font ) ) {
+			if ( ! $this->draw_text( $image, $line, $font_size, $x, $baseline, $text_color, $font ) ) {
 				return false;
 			}
 		}
 
-		$data['title_height'] = $total_height;
-
-		return true;
+		return array( 'font_size' => $font_size, 'height' => $total_height, 'top' => $title_top );
 	}
 
 	/**
@@ -360,19 +433,94 @@ final class CardImage {
 	 */
 	private function draw_author_chip( $image, array $data ): bool {
 		$settings  = $data['settings'];
-		$show_name = ! empty( $settings['show_author_name'] ) && '' !== $data['author_name'];
-		$show_site = ! empty( $settings['show_site_name'] ) && '' !== $data['site_name'];
-		$show_photo = ! empty( $settings['show_author_photo'] ) && '' !== $data['avatar']['bytes'];
+		$layout    = $data['layout'];
+		$block     = $data['title_block'];
+		$show_name    = ! empty( $settings['show_author_name'] ) && '' !== $data['author_name'];
+		$show_site    = ! empty( $settings['show_site_name'] ) && '' !== $data['site_name'];
+		$show_photo   = 'chip' === $layout['byline'] && ! empty( $settings['show_author_photo'] ) && '' !== $data['avatar']['bytes'];
+		$show_reading = 'meta' === $layout['byline'] && ! empty( $settings['show_reading_time'] ) && '' !== $data['reading_time_text'];
 
-		if ( ! $show_name && ! $show_site && ! $show_photo ) {
+		if ( ! $show_name && ! $show_site && ! $show_photo && ! $show_reading ) {
 			return true;
 		}
 
-		$title_top    = ! empty( $settings['show_reading_time'] ) ? 176 : 120;
-		$title_layout = $this->measure_title_block( $data['title'], $data['bold_font'], 56, self::TITLE_WIDTH, 3 );
-		$y            = max( 454, $title_top + $title_layout[1] + 54 );
-		$x            = self::PADDING;
-		$text_x       = $x;
+		$text_color = $this->allocate_hex_color( $image, $settings['text_color'] );
+		$muted      = $this->allocate_hex_color( $image, $settings['text_color'], 46 );
+		$name_font  = is_readable( $data['extrabold_font'] ) ? $data['extrabold_font'] : $data['bold_font'];
+
+		if ( 'meta' === $layout['byline'] ) {
+			// Minimal keeps the byline typographic so the title remains the visual focus.
+			$x        = self::PADDING;
+			$baseline = self::HEIGHT - 96;
+
+			if ( $show_name ) {
+				if ( ! $this->draw_text( $image, $data['author_name'], 30, $x, $baseline, $text_color, $name_font ) ) {
+					return false;
+				}
+				$x += $this->text_width( $data['author_name'], $name_font, 30 );
+			}
+
+			$parts = array();
+			if ( $show_reading ) {
+				$parts[] = $data['reading_time_text'];
+			}
+			if ( $show_site ) {
+				$parts[] = $data['site_name'];
+			}
+
+			$remainder = implode( ' · ', $parts );
+			if ( $show_name && '' !== $remainder ) {
+				$remainder = ' · ' . $remainder;
+			}
+
+			return '' === $remainder || $this->draw_text( $image, $remainder, 26, $x, $baseline, $muted, $data['regular_font'] );
+		}
+
+		if ( 'center' === $layout['align'] ) {
+			$bottom        = self::HEIGHT - 48;
+			$site_baseline = $bottom;
+			$name_baseline = $show_site ? ( $bottom - 44 ) : $bottom;
+
+			if ( $show_photo ) {
+				if ( $show_name ) {
+					$top_baseline = $name_baseline;
+					$cap          = 34;
+				} elseif ( $show_site ) {
+					$top_baseline = $site_baseline;
+					$cap          = 26;
+				} else {
+					$top_baseline = $bottom;
+					$cap          = 0;
+				}
+
+				$avatar_y = ( $show_name || $show_site ) ? ( $top_baseline - $cap - 16 - self::AVATAR_SIZE ) : ( $bottom - self::AVATAR_SIZE );
+				$avatar = $this->create_circular_avatar( $data['avatar']['bytes'], self::AVATAR_SIZE );
+				if ( $avatar ) {
+					imagecopy( $image, $avatar, (int) round( ( self::WIDTH - self::AVATAR_SIZE ) / 2 ), $avatar_y, 0, 0, self::AVATAR_SIZE, self::AVATAR_SIZE );
+					imagedestroy( $avatar );
+				}
+			}
+
+			if ( $show_name ) {
+				$x        = $this->anchor_x( 'center', $this->text_width( $data['author_name'], $name_font, 34 ) );
+				if ( ! $this->draw_text( $image, $data['author_name'], 34, $x, $name_baseline, $text_color, $name_font ) ) {
+					return false;
+				}
+			}
+
+			if ( $show_site ) {
+				$x        = $this->anchor_x( 'center', $this->text_width( $data['site_name'], $data['regular_font'], 26 ) );
+				if ( ! $this->draw_text( $image, $data['site_name'], 26, $x, $site_baseline, $muted, $data['regular_font'] ) ) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		$y = max( 454, $block['top'] + $block['height'] + 54 );
+		$x      = self::PADDING;
+		$text_x = $x;
 
 		if ( $show_photo ) {
 			$avatar = $this->create_circular_avatar( $data['avatar']['bytes'], self::AVATAR_SIZE );
@@ -383,10 +531,7 @@ final class CardImage {
 			}
 		}
 
-		$text_color = $this->allocate_hex_color( $image, $settings['text_color'] );
-		$muted      = $this->allocate_hex_color( $image, $settings['text_color'], 46 );
-
-		if ( $show_name && ! $this->draw_text( $image, $data['author_name'], 32, $text_x, $y + 39, $text_color, $data['bold_font'] ) ) {
+		if ( $show_name && ! $this->draw_text( $image, $data['author_name'], 34, $text_x, $y + 40, $text_color, $name_font ) ) {
 			return false;
 		}
 
@@ -398,6 +543,21 @@ final class CardImage {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Resolve an x-coordinate for the requested alignment.
+	 *
+	 * @param string $align Alignment key.
+	 * @param int    $width Element width.
+	 * @return int
+	 */
+	private function anchor_x( string $align, int $width ): int {
+		if ( 'center' === $align ) {
+			return (int) round( ( self::WIDTH - $width ) / 2 );
+		}
+
+		return self::PADDING;
 	}
 
 	/**
@@ -733,24 +893,6 @@ final class CardImage {
 				wp_delete_file( $file );
 			}
 		}
-	}
-
-	/**
-	 * Draw a rounded pill.
-	 *
-	 * @param resource|\GdImage $image Image resource.
-	 * @param int               $x X position.
-	 * @param int               $y Y position.
-	 * @param int               $width Width.
-	 * @param int               $height Height.
-	 * @param int               $color Color.
-	 * @return void
-	 */
-	private function draw_pill( $image, int $x, int $y, int $width, int $height, int $color ): void {
-		$radius = (int) floor( $height / 2 );
-		imagefilledrectangle( $image, $x + $radius, $y, $x + $width - $radius, $y + $height, $color );
-		imagefilledellipse( $image, $x + $radius, $y + $radius, $height, $height, $color );
-		imagefilledellipse( $image, $x + $width - $radius, $y + $radius, $height, $height, $color );
 	}
 
 	/**

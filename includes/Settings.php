@@ -21,12 +21,13 @@ final class Settings {
 			'show_author_name'     => true,
 			'show_reading_time'    => true,
 			'show_site_name'       => true,
+			'template'             => 'classic',
 			'bg_type'              => 'solid',
-			'bg_color'             => '#0f172a',
-			'bg_gradient_from'     => '#0f172a',
-			'bg_gradient_to'       => '#3b0764',
-			'text_color'           => '#ffffff',
-			'accent_color'         => '#22d3ee',
+			'bg_color'             => '#0c0a09',
+			'bg_gradient_from'     => '#0c0a09',
+			'bg_gradient_to'       => '#1c1310',
+			'text_color'           => '#faf7f2',
+			'accent_color'         => '#fbbf24',
 			'reading_wpm'          => 200,
 			'site_name_text'       => get_bloginfo( 'name' ),
 			'default_author_photo' => 0,
@@ -117,6 +118,9 @@ final class Settings {
 
 		$bg_type           = isset( $input['bg_type'] ) && is_scalar( $input['bg_type'] ) ? (string) $input['bg_type'] : '';
 		$output['bg_type'] = in_array( $bg_type, array( 'solid', 'gradient' ), true ) ? $bg_type : $defaults['bg_type'];
+
+		$template           = isset( $input['template'] ) && is_scalar( $input['template'] ) ? (string) $input['template'] : '';
+		$output['template'] = in_array( $template, array( 'classic', 'centered', 'minimal' ), true ) ? $template : $defaults['template'];
 
 		foreach ( array( 'bg_color', 'bg_gradient_from', 'bg_gradient_to', 'text_color', 'accent_color' ) as $key ) {
 			$raw_color      = isset( $input[ $key ] ) && is_scalar( $input[ $key ] ) ? (string) $input[ $key ] : '';
@@ -245,6 +249,11 @@ final class Settings {
 		echo '<div class="postbox ogify-card">';
 		echo '<h2 class="ogify-card__title">' . esc_html__( 'Design', 'ogify' ) . '</h2>';
 		echo '<fieldset class="ogify-field ogify-fieldset">';
+		echo '<legend>' . esc_html__( 'Card template', 'ogify' ) . '</legend>';
+		self::render_template_field();
+		echo '</fieldset>';
+
+		echo '<fieldset class="ogify-field ogify-fieldset">';
 		echo '<legend>' . esc_html__( 'Background type', 'ogify' ) . '</legend>';
 		self::render_bg_type_field();
 		echo '</fieldset>';
@@ -281,7 +290,7 @@ final class Settings {
 		echo '</div>';
 
 		echo '<div class="ogify-field">';
-		echo '<label class="ogify-field__label" for="ogify-accent-color">' . esc_html__( 'Reading-time pill / accents', 'ogify' ) . '</label>';
+		echo '<label class="ogify-field__label" for="ogify-accent-color">' . esc_html__( 'Reading-time tag / accents', 'ogify' ) . '</label>';
 		self::render_color_field( array( 'key' => 'accent_color' ) );
 		echo '</div>';
 		echo '</div>';
@@ -461,6 +470,34 @@ final class Settings {
 				esc_attr( self::OPTION ),
 				esc_attr( $value ),
 				checked( $settings['bg_type'], $value, false ),
+				esc_html( $label )
+			);
+		}
+
+		echo '</div>';
+	}
+
+	/**
+	 * Render template radios.
+	 *
+	 * @return void
+	 */
+	public static function render_template_field(): void {
+		$settings = self::get();
+		$options  = array(
+			'classic'  => __( 'Classic', 'ogify' ),
+			'centered' => __( 'Centered', 'ogify' ),
+			'minimal'  => __( 'Minimal', 'ogify' ),
+		);
+
+		echo '<div class="ogify-radios">';
+
+		foreach ( $options as $value => $label ) {
+			printf(
+				'<label><input type="radio" name="%1$s[template]" value="%2$s" %3$s> %4$s</label>',
+				esc_attr( self::OPTION ),
+				esc_attr( $value ),
+				checked( $settings['template'], $value, false ),
 				esc_html( $label )
 			);
 		}
