@@ -16,7 +16,10 @@ final class Plugin {
 			add_action( 'admin_notices', array( $this, 'render_gd_notice' ) );
 		}
 
-		// Settings, profile fields, card rendering, and meta tags register here when their files exist.
+		if ( is_admin() ) {
+			require_once OGIFY_PATH . 'includes/Settings.php';
+			Settings::register_hooks();
+		}
 	}
 
 	/**

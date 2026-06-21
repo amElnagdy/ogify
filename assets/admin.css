@@ -1,0 +1,39 @@
+.ogify-checkboxes,
+.ogify-radios {
+	display: grid;
+	gap: 8px;
+}
+
+.ogify-media-field {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.ogify-media-preview {
+	align-items: center;
+	background: #f6f7f7;
+	border: 1px solid #c3c4c7;
+	display: flex;
+	height: 72px;
+	justify-content: center;
+	width: 72px;
+}
+
+.ogify-media-preview:empty::before {
+	color: #646970;
+	content: "";
+}
+
+.ogify-media-preview img {
+	display: block;
+	height: 100%;
+	object-fit: cover;
+	width: 100%;
+}
+
+.ogify-media-actions {
+	display: flex;
+	gap: 6px;
+}
