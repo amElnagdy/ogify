@@ -61,10 +61,26 @@
 	padding-inline: 0;
 }
 
-.ogify-toggle-list,
-.ogify-radios {
+.ogify-toggle-list {
 	display: grid;
 	gap: 10px;
+}
+
+/* Short radio sets (template, background type) read better inline than stacked. */
+.ogify-radios {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px 24px;
+}
+
+.ogify-radios label {
+	align-items: center;
+	display: inline-flex;
+	gap: 6px;
+}
+
+.ogify-radios label input {
+	margin: 0;
 }
 
 .ogify-switch {
