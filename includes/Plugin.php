@@ -33,6 +33,12 @@ final class Plugin {
 			Settings::register_hooks();
 			Profile::register_hooks();
 		}
+
+		if ( self::has_gd() && ! empty( Settings::get()['enabled'] ) ) {
+			require_once OGIFY_PATH . 'includes/MetaTags.php';
+			$meta_tags = new MetaTags( $this->card_image );
+			$meta_tags->register_hooks();
+		}
 	}
 
 	/**
