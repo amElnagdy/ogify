@@ -18,7 +18,9 @@ final class Plugin {
 
 		if ( is_admin() ) {
 			require_once OGIFY_PATH . 'includes/Settings.php';
+			require_once OGIFY_PATH . 'includes/Profile.php';
 			Settings::register_hooks();
+			Profile::register_hooks();
 		}
 	}
 

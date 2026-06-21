@@ -4,7 +4,9 @@
 	var settings = window.ogifyAdmin || {};
 
 	$(function () {
-		$('.wp-color-picker').wpColorPicker();
+		if ($.fn.wpColorPicker) {
+			$('.wp-color-picker').wpColorPicker();
+		}
 	});
 
 	$(document).on('click', '[data-ogify-media-select]', function (event) {
