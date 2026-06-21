@@ -190,6 +190,22 @@ final class Settings {
 
 		echo '<div class="wrap ogify-settings">';
 		echo '<h1>' . esc_html__( 'OGify', 'ogify' ) . '</h1>';
+
+		if ( Plugin::has_gd() ) {
+			$preview_url = ( new CardImage() )->preview_url();
+
+			if ( '' !== $preview_url ) {
+				echo '<h2>' . esc_html__( 'Preview', 'ogify' ) . '</h2>';
+				printf(
+					'<p><img src="%1$s" alt="%2$s" width="%3$s" height="%4$s" style="max-width:100%%;height:auto;"></p>',
+					esc_url( $preview_url ),
+					esc_attr__( 'OGify preview image', 'ogify' ),
+					esc_attr( (string) CardImage::WIDTH ),
+					esc_attr( (string) CardImage::HEIGHT )
+				);
+			}
+		}
+
 		echo '<form action="' . esc_url( admin_url( 'options.php' ) ) . '" method="post">';
 		settings_fields( 'ogify_settings' );
 		do_settings_sections( 'ogify' );

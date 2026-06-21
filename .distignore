@@ -1,0 +1,11 @@
+.git
+.github
+.gitignore
+.distignore
+.dev
+node_modules
+AGENTS.md
+OGIFY-SPEC.md
+*.design.md
+*-design.md
+DESIGN*.md

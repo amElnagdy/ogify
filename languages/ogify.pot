@@ -1,0 +1,212 @@
+# Copyright (C) 2026 Nagdy
+# This file is distributed under the GPL-3.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: OGify – Dynamic Open Graph Image Generator 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ogify\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-06-21T12:41:40+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: ogify\n"
+
+#. Plugin Name of the plugin
+#: ogify.php
+msgid "OGify – Dynamic Open Graph Image Generator"
+msgstr ""
+
+#. Description of the plugin
+#: ogify.php
+msgid "Generates dynamic Open Graph share images for posts."
+msgstr ""
+
+#. Author of the plugin
+#: ogify.php
+msgid "Nagdy"
+msgstr ""
+
+#. Author URI of the plugin
+#: ogify.php
+msgid "https://nagdy.me"
+msgstr ""
+
+#. translators: Sample title shown in the settings preview image.
+#: includes/CardImage.php:79
+msgid "Your content, ready to share beautifully"
+msgstr ""
+
+#. translators: %d: reading time in minutes.
+#: includes/CardImage.php:82
+#: includes/ReadingTime.php:48
+msgid "%d min read"
+msgid_plural "%d min read"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/Plugin.php:59
+msgid "OGify needs the GD/FreeType extension. Image generation is disabled."
+msgstr ""
+
+#: includes/Profile.php:48
+#: includes/Profile.php:71
+msgid "OGify share photo preview"
+msgstr ""
+
+#: includes/Profile.php:51
+msgid "OGify share photo"
+msgstr ""
+
+#: includes/Profile.php:69
+msgid "Choose OGify share photo"
+msgstr ""
+
+#: includes/Profile.php:70
+#: includes/Settings.php:175
+#: includes/Settings.php:383
+msgid "Use this image"
+msgstr ""
+
+#: includes/Profile.php:72
+#: includes/Settings.php:385
+msgid "Choose Image"
+msgstr ""
+
+#: includes/Profile.php:77
+#: includes/Settings.php:390
+msgid "Remove"
+msgstr ""
+
+#: includes/Settings.php:63
+#: includes/Settings.php:64
+#: includes/Settings.php:192
+msgid "OGify"
+msgstr ""
+
+#: includes/Settings.php:87
+msgid "General"
+msgstr ""
+
+#: includes/Settings.php:88
+msgid "Card Content"
+msgstr ""
+
+#: includes/Settings.php:89
+msgid "Design"
+msgstr ""
+
+#: includes/Settings.php:91
+msgid "Enabled"
+msgstr ""
+
+#: includes/Settings.php:91
+msgid "Generate Open Graph images"
+msgstr ""
+
+#: includes/Settings.php:92
+msgid "Post Types"
+msgstr ""
+
+#: includes/Settings.php:93
+msgid "Reading Speed"
+msgstr ""
+
+#: includes/Settings.php:95
+msgid "Author Photo"
+msgstr ""
+
+#: includes/Settings.php:95
+msgid "Show the author photo"
+msgstr ""
+
+#: includes/Settings.php:96
+msgid "Author Name"
+msgstr ""
+
+#: includes/Settings.php:96
+msgid "Show the author name"
+msgstr ""
+
+#: includes/Settings.php:97
+msgid "Reading Time"
+msgstr ""
+
+#: includes/Settings.php:97
+msgid "Show the reading time"
+msgstr ""
+
+#: includes/Settings.php:98
+msgid "Site Name"
+msgstr ""
+
+#: includes/Settings.php:98
+msgid "Show the site name"
+msgstr ""
+
+#: includes/Settings.php:99
+msgid "Site Name Text"
+msgstr ""
+
+#: includes/Settings.php:100
+msgid "Default Author Photo"
+msgstr ""
+
+#: includes/Settings.php:102
+msgid "Background Type"
+msgstr ""
+
+#: includes/Settings.php:103
+msgid "Background Color"
+msgstr ""
+
+#: includes/Settings.php:104
+msgid "Gradient Start"
+msgstr ""
+
+#: includes/Settings.php:105
+msgid "Gradient End"
+msgstr ""
+
+#: includes/Settings.php:106
+msgid "Text Color"
+msgstr ""
+
+#: includes/Settings.php:107
+msgid "Accent Color"
+msgstr ""
+
+#: includes/Settings.php:174
+msgid "Choose author photo"
+msgstr ""
+
+#: includes/Settings.php:176
+#: includes/Settings.php:384
+msgid "Selected author photo"
+msgstr ""
+
+#: includes/Settings.php:198
+msgid "Preview"
+msgstr ""
+
+#: includes/Settings.php:202
+msgid "OGify preview image"
+msgstr ""
+
+#: includes/Settings.php:337
+msgid "Solid"
+msgstr ""
+
+#: includes/Settings.php:338
+msgid "Gradient"
+msgstr ""
+
+#: includes/Settings.php:364
+msgid "Default author photo preview"
+msgstr ""
+
+#: includes/Settings.php:382
+msgid "Choose default author photo"
+msgstr ""

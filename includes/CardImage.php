@@ -46,6 +46,63 @@ final class CardImage {
 	}
 
 	/**
+	 * Render a settings preview card and return its public URL.
+	 *
+	 * @return string
+	 */
+	public function preview_url(): string {
+		try {
+			if ( ! $this->can_render() ) {
+				return '';
+			}
+
+			$settings   = Settings::get();
+			$user_id    = get_current_user_id();
+			$user       = $user_id ? get_userdata( $user_id ) : false;
+			$user_name  = $user && ! empty( $user->display_name ) ? (string) $user->display_name : get_bloginfo( 'name' );
+			$avatar     = $this->resolve_avatar( $user_id, $settings );
+			$upload_dir = wp_upload_dir();
+
+			if ( empty( $upload_dir['basedir'] ) || empty( $upload_dir['baseurl'] ) || ! empty( $upload_dir['error'] ) ) {
+				return '';
+			}
+
+			$cache_dir = trailingslashit( $upload_dir['basedir'] ) . 'ogify';
+			if ( ! wp_mkdir_p( $cache_dir ) || ! wp_is_writable( $cache_dir ) ) {
+				return '';
+			}
+
+			$settings_hash = md5( (string) wp_json_encode( $settings ) );
+			$filename      = 'preview-' . $settings_hash . '.png';
+
+			/* translators: Sample title shown in the settings preview image. */
+			$title = __( 'Your content, ready to share beautifully', 'ogify' );
+
+			/* translators: %d: reading time in minutes. */
+			$reading_label = sprintf( _n( '%d min read', '%d min read', 3, 'ogify' ), 3 );
+
+			$data = array(
+				'post_id'       => 0,
+				'title'         => $this->sanitize_drawn_text( $title ),
+				'reading_label' => $this->uppercase( $reading_label ),
+				'author_name'   => $this->sanitize_drawn_text( $user_name ),
+				'site_name'     => $this->resolve_site_name( $settings ),
+				'avatar'        => $avatar,
+				'settings'      => $settings,
+				'dir'           => $cache_dir,
+				'path'          => trailingslashit( $cache_dir ) . $filename,
+				'url'           => rtrim( $upload_dir['baseurl'], '/' ) . '/ogify/' . $filename,
+				'bold_font'     => OGIFY_PATH . 'assets/fonts/Inter-Bold.ttf',
+				'regular_font'  => OGIFY_PATH . 'assets/fonts/Inter-Regular.ttf',
+			);
+
+			return $this->render_to_file( $data ) ? $data['url'] : '';
+		} catch ( \Throwable $error ) {
+			return '';
+		}
+	}
+
+	/**
 	 * Resolve WordPress data before passing it to GD.
 	 *
 	 * @param int $post_id Post ID.
