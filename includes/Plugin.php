@@ -7,18 +7,29 @@
 
 final class Plugin {
 	/**
+	 * Card renderer instance.
+	 *
+	 * @var CardImage
+	 */
+	private $card_image;
+
+	/**
 	 * Register plugin hooks.
 	 *
 	 * @return void
 	 */
 	public function register(): void {
+		require_once OGIFY_PATH . 'includes/Settings.php';
+		require_once OGIFY_PATH . 'includes/Profile.php';
+		require_once OGIFY_PATH . 'includes/CardImage.php';
+
+		$this->card_image = new CardImage();
+
 		if ( ! self::has_gd() ) {
 			add_action( 'admin_notices', array( $this, 'render_gd_notice' ) );
 		}
 
 		if ( is_admin() ) {
-			require_once OGIFY_PATH . 'includes/Settings.php';
-			require_once OGIFY_PATH . 'includes/Profile.php';
 			Settings::register_hooks();
 			Profile::register_hooks();
 		}
