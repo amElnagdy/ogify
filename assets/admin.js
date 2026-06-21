@@ -3,11 +3,22 @@
 
 	var settings = window.ogifyAdmin || {};
 
+	function toggleBackgroundFields() {
+		var bgType = $('input[name="ogify_settings[bg_type]"]:checked').val();
+
+		$('.ogify-when-solid').prop('hidden', bgType === 'gradient');
+		$('.ogify-when-gradient').prop('hidden', bgType !== 'gradient');
+	}
+
 	$(function () {
 		if ($.fn.wpColorPicker) {
 			$('.wp-color-picker').wpColorPicker();
 		}
+
+		toggleBackgroundFields();
 	});
+
+	$(document).on('change', 'input[name="ogify_settings[bg_type]"]', toggleBackgroundFields);
 
 	$(document).on('click', '[data-ogify-media-select]', function (event) {
 		event.preventDefault();
@@ -43,7 +54,10 @@
 		var $field = $(this).closest('[data-ogify-media-field]');
 
 		$field.find('[data-ogify-media-id]').val('0');
-		$field.find('[data-ogify-media-preview]').empty();
+		$field.find('[data-ogify-media-preview]').html($('<span>', {
+			'class': 'ogify-media-empty',
+			text: settings.emptyPreview || ''
+		}));
 		$(this).prop('hidden', true);
 	});
 })(jQuery);

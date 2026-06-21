@@ -1,7 +1,155 @@
-.ogify-checkboxes,
+.ogify-layout {
+	align-items: start;
+	display: grid;
+	gap: 24px;
+	grid-template-columns: minmax(0, 1fr) 400px;
+}
+
+.ogify-form {
+	display: grid;
+	gap: 24px;
+}
+
+.ogify-card,
+.ogify-preview {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 8px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+	box-sizing: border-box;
+	margin: 0;
+	min-inline-size: 0;
+	padding: 20px;
+	text-align: start;
+}
+
+.ogify-preview {
+	position: sticky;
+	top: 32px;
+}
+
+.ogify-card__title {
+	font-size: 16px;
+	line-height: 1.4;
+	margin-block: 0 8px;
+	margin-inline: 0;
+	padding: 0;
+}
+
+.ogify-field {
+	border-block-end: 1px solid #f0f0f1;
+	display: grid;
+	gap: 6px;
+	margin: 0;
+	padding-block: 16px;
+}
+
+.ogify-field:last-child {
+	border-block-end: 0;
+	padding-block-end: 0;
+}
+
+.ogify-field__label,
+.ogify-fieldset > legend {
+	color: #1d2327;
+	font-weight: 600;
+}
+
+.ogify-fieldset {
+	border: 0;
+	min-inline-size: 0;
+	padding-inline: 0;
+}
+
+.ogify-toggle-list,
 .ogify-radios {
 	display: grid;
-	gap: 8px;
+	gap: 10px;
+}
+
+.ogify-switch {
+	align-items: center;
+	cursor: pointer;
+	display: inline-flex;
+	gap: 10px;
+	min-height: 24px;
+	width: fit-content;
+}
+
+.ogify-switch input {
+	height: 1px;
+	margin: 0;
+	opacity: 0;
+	position: absolute;
+	width: 1px;
+}
+
+.ogify-switch__track {
+	background: #646970;
+	border-radius: 999px;
+	box-sizing: border-box;
+	flex: 0 0 auto;
+	height: 24px;
+	position: relative;
+	width: 44px;
+}
+
+.ogify-switch__track::before {
+	background: #fff;
+	border-radius: 50%;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+	content: "";
+	height: 18px;
+	inset-block-start: 3px;
+	inset-inline-start: 3px;
+	position: absolute;
+	transition: transform 120ms ease;
+	width: 18px;
+}
+
+.ogify-switch input:checked + .ogify-switch__track {
+	background: var(--wp-admin-theme-color, #2271b1);
+}
+
+.ogify-switch input:checked + .ogify-switch__track::before {
+	transform: translateX(20px);
+}
+
+[dir="rtl"] .ogify-switch input:checked + .ogify-switch__track::before {
+	transform: translateX(-20px);
+}
+
+.ogify-switch input:focus-visible + .ogify-switch__track,
+.ogify-settings .button:focus-visible,
+.ogify-settings .wp-color-result.button:focus-visible,
+.ogify-settings input[type="text"]:focus-visible,
+.ogify-settings input[type="number"]:focus-visible {
+	box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 2px) var(--wp-admin-theme-color, #2271b1);
+	outline: 2px solid transparent;
+}
+
+.ogify-gradient-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.ogify-gradient-fields > div {
+	display: grid;
+	flex: 1 1 180px;
+	gap: 6px;
+}
+
+/* Honor [hidden] on the disclosure groups; the .ogify-field display rule would otherwise win. */
+.ogify-when-solid[hidden],
+.ogify-when-gradient[hidden] {
+	display: none;
+}
+
+/* With JS off the groups can't be toggled, so reveal both. */
+.no-js .ogify-when-solid[hidden],
+.no-js .ogify-when-gradient[hidden] {
+	display: grid;
 }
 
 .ogify-media-field {
@@ -14,16 +162,16 @@
 .ogify-media-preview {
 	align-items: center;
 	background: #f6f7f7;
-	border: 1px solid #c3c4c7;
-	display: flex;
-	height: 72px;
-	justify-content: center;
-	width: 72px;
-}
-
-.ogify-media-preview:empty::before {
+	border: 1px dashed #8c8f94;
+	box-sizing: border-box;
 	color: #646970;
-	content: "";
+	display: flex;
+	font-size: 12px;
+	height: 84px;
+	justify-content: center;
+	padding-inline: 8px;
+	text-align: center;
+	width: 84px;
 }
 
 .ogify-media-preview img {
@@ -35,5 +183,38 @@
 
 .ogify-media-actions {
 	display: flex;
+	flex-wrap: wrap;
 	gap: 6px;
+}
+
+.ogify-preview__image {
+	margin-block: 12px;
+	margin-inline: 0;
+}
+
+.ogify-preview__image img {
+	display: block;
+	height: auto;
+	max-inline-size: 100%;
+}
+
+.ogify-preview .notice.inline {
+	margin-block: 12px;
+	margin-inline: 0;
+}
+
+.ogify-form > .submit {
+	margin: 0;
+	padding: 0;
+}
+
+@media (max-width: 1200px) {
+	.ogify-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.ogify-preview {
+		order: -1;
+		position: static;
+	}
 }

@@ -69,7 +69,7 @@ final class Settings {
 	}
 
 	/**
-	 * Register the option and fields.
+	 * Register the option.
 	 *
 	 * @return void
 	 */
@@ -83,28 +83,6 @@ final class Settings {
 				'sanitize_callback' => array( __CLASS__, 'sanitize' ),
 			)
 		);
-
-		add_settings_section( 'ogify_general', esc_html__( 'General', 'ogify' ), '__return_false', 'ogify' );
-		add_settings_section( 'ogify_content', esc_html__( 'Card Content', 'ogify' ), '__return_false', 'ogify' );
-		add_settings_section( 'ogify_design', esc_html__( 'Design', 'ogify' ), '__return_false', 'ogify' );
-
-		add_settings_field( 'ogify_enabled', esc_html__( 'Enabled', 'ogify' ), array( __CLASS__, 'render_checkbox_field' ), 'ogify', 'ogify_general', array( 'key' => 'enabled', 'label' => __( 'Generate Open Graph images', 'ogify' ) ) );
-		add_settings_field( 'ogify_post_types', esc_html__( 'Post Types', 'ogify' ), array( __CLASS__, 'render_post_types_field' ), 'ogify', 'ogify_general' );
-		add_settings_field( 'ogify_reading_wpm', esc_html__( 'Reading Speed', 'ogify' ), array( __CLASS__, 'render_number_field' ), 'ogify', 'ogify_general', array( 'key' => 'reading_wpm', 'min' => 50, 'max' => 600 ) );
-
-		add_settings_field( 'ogify_show_author_photo', esc_html__( 'Author Photo', 'ogify' ), array( __CLASS__, 'render_checkbox_field' ), 'ogify', 'ogify_content', array( 'key' => 'show_author_photo', 'label' => __( 'Show the author photo', 'ogify' ) ) );
-		add_settings_field( 'ogify_show_author_name', esc_html__( 'Author Name', 'ogify' ), array( __CLASS__, 'render_checkbox_field' ), 'ogify', 'ogify_content', array( 'key' => 'show_author_name', 'label' => __( 'Show the author name', 'ogify' ) ) );
-		add_settings_field( 'ogify_show_reading_time', esc_html__( 'Reading Time', 'ogify' ), array( __CLASS__, 'render_checkbox_field' ), 'ogify', 'ogify_content', array( 'key' => 'show_reading_time', 'label' => __( 'Show the reading time', 'ogify' ) ) );
-		add_settings_field( 'ogify_show_site_name', esc_html__( 'Site Name', 'ogify' ), array( __CLASS__, 'render_checkbox_field' ), 'ogify', 'ogify_content', array( 'key' => 'show_site_name', 'label' => __( 'Show the site name', 'ogify' ) ) );
-		add_settings_field( 'ogify_site_name_text', esc_html__( 'Site Name Text', 'ogify' ), array( __CLASS__, 'render_text_field' ), 'ogify', 'ogify_content', array( 'key' => 'site_name_text' ) );
-		add_settings_field( 'ogify_default_author_photo', esc_html__( 'Default Author Photo', 'ogify' ), array( __CLASS__, 'render_media_field' ), 'ogify', 'ogify_content' );
-
-		add_settings_field( 'ogify_bg_type', esc_html__( 'Background Type', 'ogify' ), array( __CLASS__, 'render_bg_type_field' ), 'ogify', 'ogify_design' );
-		add_settings_field( 'ogify_bg_color', esc_html__( 'Background Color', 'ogify' ), array( __CLASS__, 'render_color_field' ), 'ogify', 'ogify_design', array( 'key' => 'bg_color' ) );
-		add_settings_field( 'ogify_bg_gradient_from', esc_html__( 'Gradient Start', 'ogify' ), array( __CLASS__, 'render_color_field' ), 'ogify', 'ogify_design', array( 'key' => 'bg_gradient_from' ) );
-		add_settings_field( 'ogify_bg_gradient_to', esc_html__( 'Gradient End', 'ogify' ), array( __CLASS__, 'render_color_field' ), 'ogify', 'ogify_design', array( 'key' => 'bg_gradient_to' ) );
-		add_settings_field( 'ogify_text_color', esc_html__( 'Text Color', 'ogify' ), array( __CLASS__, 'render_color_field' ), 'ogify', 'ogify_design', array( 'key' => 'text_color' ) );
-		add_settings_field( 'ogify_accent_color', esc_html__( 'Accent Color', 'ogify' ), array( __CLASS__, 'render_color_field' ), 'ogify', 'ogify_design', array( 'key' => 'accent_color' ) );
 	}
 
 	/**
@@ -122,16 +100,20 @@ final class Settings {
 			$output[ $key ] = ! empty( $input[ $key ] );
 		}
 
-		$public_post_types   = get_post_types( array( 'public' => true ), 'names' );
-		$selected_post_types = array();
+		if ( ! isset( $input['post_types'] ) ) {
+			$output['post_types'] = self::get()['post_types'];
+		} else {
+			$public_post_types   = get_post_types( array( 'public' => true ), 'names' );
+			$selected_post_types = array();
 
-		foreach ( isset( $input['post_types'] ) ? (array) $input['post_types'] : array() as $post_type ) {
-			if ( is_scalar( $post_type ) ) {
-				$selected_post_types[] = sanitize_key( (string) $post_type );
+			foreach ( (array) $input['post_types'] as $post_type ) {
+				if ( is_scalar( $post_type ) ) {
+					$selected_post_types[] = sanitize_key( (string) $post_type );
+				}
 			}
-		}
 
-		$output['post_types'] = array_values( array_intersect( $selected_post_types, $public_post_types ) );
+			$output['post_types'] = array_values( array_intersect( $selected_post_types, $public_post_types ) );
+		}
 
 		$bg_type           = isset( $input['bg_type'] ) && is_scalar( $input['bg_type'] ) ? (string) $input['bg_type'] : '';
 		$output['bg_type'] = in_array( $bg_type, array( 'solid', 'gradient' ), true ) ? $bg_type : $defaults['bg_type'];
@@ -171,9 +153,10 @@ final class Settings {
 			'ogify-admin',
 			'ogifyAdmin',
 			array(
-				'mediaTitle'  => __( 'Choose author photo', 'ogify' ),
-				'mediaButton' => __( 'Use this image', 'ogify' ),
-				'previewAlt'  => __( 'Selected author photo', 'ogify' ),
+				'mediaTitle'   => __( 'Choose author photo', 'ogify' ),
+				'mediaButton'  => __( 'Use this image', 'ogify' ),
+				'previewAlt'   => __( 'Selected author photo', 'ogify' ),
+				'emptyPreview' => __( 'No image selected', 'ogify' ),
 			)
 		);
 	}
@@ -188,29 +171,150 @@ final class Settings {
 			return;
 		}
 
+		$settings      = self::get();
+		$card_image    = new CardImage();
+		$avatar_source = $card_image->resolve_avatar_source( get_current_user_id() );
+
 		echo '<div class="wrap ogify-settings">';
 		echo '<h1>' . esc_html__( 'OGify', 'ogify' ) . '</h1>';
+		echo '<div class="ogify-layout">';
 
-		if ( Plugin::has_gd() ) {
-			$preview_url = ( new CardImage() )->preview_url();
+		echo '<form action="' . esc_url( admin_url( 'options.php' ) ) . '" method="post" class="ogify-form">';
+		settings_fields( 'ogify_settings' );
+
+		echo '<div class="postbox ogify-card">';
+		echo '<h2 class="ogify-card__title">' . esc_html__( 'General', 'ogify' ) . '</h2>';
+
+		$enabled_description = 'ogify-enabled-description';
+		echo '<div class="ogify-field">';
+		self::render_checkbox_field(
+			array(
+				'key'            => 'enabled',
+				'label'          => __( 'Generate Open Graph share cards', 'ogify' ),
+				'description_id' => $enabled_description,
+			)
+		);
+		echo '<p id="' . esc_attr( $enabled_description ) . '" class="description">' . esc_html__( 'Creates a 1200x630 card when posts are shared.', 'ogify' ) . '</p>';
+		echo '</div>';
+
+		$wpm_description = 'ogify-reading-wpm-description';
+		echo '<div class="ogify-field">';
+		echo '<label class="ogify-field__label" for="ogify-reading-wpm">' . esc_html__( 'Reading speed', 'ogify' ) . '</label>';
+		self::render_number_field(
+			array(
+				'key'            => 'reading_wpm',
+				'min'            => 50,
+				'max'            => 600,
+				'description_id' => $wpm_description,
+			)
+		);
+		echo '<p id="' . esc_attr( $wpm_description ) . '" class="description">' . esc_html__( 'Words per minute — used to estimate reading time.', 'ogify' ) . '</p>';
+		echo '</div>';
+		echo '</div>';
+
+		echo '<div class="postbox ogify-card">';
+		echo '<h2 class="ogify-card__title">' . esc_html__( 'Card content', 'ogify' ) . '</h2>';
+		echo '<fieldset class="ogify-field ogify-fieldset">';
+		echo '<legend>' . esc_html__( 'Show on the card', 'ogify' ) . '</legend>';
+		echo '<div class="ogify-toggle-list">';
+		self::render_checkbox_field( array( 'key' => 'show_author_photo', 'label' => __( 'Show the author photo', 'ogify' ) ) );
+		self::render_checkbox_field( array( 'key' => 'show_author_name', 'label' => __( 'Show the author name', 'ogify' ) ) );
+		self::render_checkbox_field( array( 'key' => 'show_reading_time', 'label' => __( 'Show the reading time', 'ogify' ) ) );
+		self::render_checkbox_field( array( 'key' => 'show_site_name', 'label' => __( 'Show the site name', 'ogify' ) ) );
+		echo '</div>';
+		echo '</fieldset>';
+
+		$site_name_description = 'ogify-site-name-text-description';
+		echo '<div class="ogify-field">';
+		echo '<label class="ogify-field__label" for="ogify-site-name-text">' . esc_html__( 'Site name', 'ogify' ) . '</label>';
+		self::render_text_field(
+			array(
+				'key'            => 'site_name_text',
+				'description_id' => $site_name_description,
+			)
+		);
+		echo '<p id="' . esc_attr( $site_name_description ) . '" class="description">' . esc_html__( 'Overrides the site title shown on the card.', 'ogify' ) . '</p>';
+		echo '</div>';
+
+		echo '<div class="ogify-field">';
+		echo '<span class="ogify-field__label">' . esc_html__( 'Default Author Photo', 'ogify' ) . '</span>';
+		self::render_media_field( array( 'active_source' => $avatar_source ) );
+		echo '</div>';
+		echo '</div>';
+
+		echo '<div class="postbox ogify-card">';
+		echo '<h2 class="ogify-card__title">' . esc_html__( 'Design', 'ogify' ) . '</h2>';
+		echo '<fieldset class="ogify-field ogify-fieldset">';
+		echo '<legend>' . esc_html__( 'Background type', 'ogify' ) . '</legend>';
+		self::render_bg_type_field();
+		echo '</fieldset>';
+
+		echo '<div class="ogify-field ogify-when-solid"';
+		if ( 'solid' !== $settings['bg_type'] ) {
+			echo ' hidden';
+		}
+		echo '>';
+		echo '<label class="ogify-field__label" for="ogify-bg-color">' . esc_html__( 'Background color', 'ogify' ) . '</label>';
+		self::render_color_field( array( 'key' => 'bg_color' ) );
+		echo '</div>';
+
+		echo '<div class="ogify-field ogify-when-gradient"';
+		if ( 'gradient' !== $settings['bg_type'] ) {
+			echo ' hidden';
+		}
+		echo '>';
+		echo '<div class="ogify-gradient-fields">';
+		echo '<div>';
+		echo '<label class="ogify-field__label" for="ogify-bg-gradient-from">' . esc_html__( 'Gradient start', 'ogify' ) . '</label>';
+		self::render_color_field( array( 'key' => 'bg_gradient_from' ) );
+		echo '</div>';
+		echo '<div>';
+		echo '<label class="ogify-field__label" for="ogify-bg-gradient-to">' . esc_html__( 'Gradient end', 'ogify' ) . '</label>';
+		self::render_color_field( array( 'key' => 'bg_gradient_to' ) );
+		echo '</div>';
+		echo '</div>';
+		echo '</div>';
+
+		echo '<div class="ogify-field">';
+		echo '<label class="ogify-field__label" for="ogify-text-color">' . esc_html__( 'Title & body text', 'ogify' ) . '</label>';
+		self::render_color_field( array( 'key' => 'text_color' ) );
+		echo '</div>';
+
+		echo '<div class="ogify-field">';
+		echo '<label class="ogify-field__label" for="ogify-accent-color">' . esc_html__( 'Reading-time pill / accents', 'ogify' ) . '</label>';
+		self::render_color_field( array( 'key' => 'accent_color' ) );
+		echo '</div>';
+		echo '</div>';
+
+		submit_button();
+		echo '</form>';
+
+		echo '<div class="postbox ogify-preview">';
+		echo '<h2 class="ogify-card__title">' . esc_html__( 'Preview', 'ogify' ) . '</h2>';
+
+		if ( ! Plugin::has_gd() ) {
+			echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Preview unavailable because the GD image library is missing.', 'ogify' ) . '</p></div>';
+		} else {
+			$preview_url = $card_image->preview_url();
 
 			if ( '' !== $preview_url ) {
-				echo '<h2>' . esc_html__( 'Preview', 'ogify' ) . '</h2>';
 				printf(
-					'<p><img src="%1$s" alt="%2$s" width="%3$s" height="%4$s" style="max-width:100%%;height:auto;"></p>',
+					'<p class="ogify-preview__image"><img src="%1$s" alt="%2$s" width="%3$s" height="%4$s"></p>',
 					esc_url( $preview_url ),
 					esc_attr__( 'OGify preview image', 'ogify' ),
 					esc_attr( (string) CardImage::WIDTH ),
 					esc_attr( (string) CardImage::HEIGHT )
 				);
+			} else {
+				echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'Preview unavailable right now.', 'ogify' ) . '</p></div>';
 			}
+
+			echo '<p class="description">' . esc_html__( 'This reflects your saved settings. Save changes to regenerate.', 'ogify' ) . '</p>';
+			echo '<p class="description">' . esc_html__( '1200 x 630 — used by Facebook, X and LinkedIn.', 'ogify' ) . '</p>';
 		}
 
-		echo '<form action="' . esc_url( admin_url( 'options.php' ) ) . '" method="post">';
-		settings_fields( 'ogify_settings' );
-		do_settings_sections( 'ogify' );
-		submit_button();
-		echo '</form>';
+		echo '</div>';
+		echo '</div>';
 		echo '</div>';
 	}
 
@@ -225,42 +329,27 @@ final class Settings {
 		$key      = $args['key'];
 		$field_id = 'ogify-' . str_replace( '_', '-', $key );
 
+		if ( ! empty( $args['description_id'] ) && is_scalar( $args['description_id'] ) ) {
+			printf(
+				'<input type="hidden" name="%1$s[%2$s]" value="0"><label class="ogify-switch" for="%3$s"><input id="%3$s" type="checkbox" name="%1$s[%2$s]" value="1"%4$s aria-describedby="%6$s"><span class="ogify-switch__track" aria-hidden="true"></span><span class="ogify-switch__label">%5$s</span></label>',
+				esc_attr( self::OPTION ),
+				esc_attr( $key ),
+				esc_attr( $field_id ),
+				checked( ! empty( $settings[ $key ] ), true, false ),
+				esc_html( $args['label'] ),
+				esc_attr( (string) $args['description_id'] )
+			);
+			return;
+		}
+
 		printf(
-			'<input type="hidden" name="%1$s[%2$s]" value="0"><label for="%3$s"><input id="%3$s" type="checkbox" name="%1$s[%2$s]" value="1" %4$s> %5$s</label>',
+			'<input type="hidden" name="%1$s[%2$s]" value="0"><label class="ogify-switch" for="%3$s"><input id="%3$s" type="checkbox" name="%1$s[%2$s]" value="1"%4$s><span class="ogify-switch__track" aria-hidden="true"></span><span class="ogify-switch__label">%5$s</span></label>',
 			esc_attr( self::OPTION ),
 			esc_attr( $key ),
 			esc_attr( $field_id ),
 			checked( ! empty( $settings[ $key ] ), true, false ),
 			esc_html( $args['label'] )
 		);
-	}
-
-	/**
-	 * Render public post type checkboxes.
-	 *
-	 * @return void
-	 */
-	public static function render_post_types_field(): void {
-		$settings   = self::get();
-		$post_types = get_post_types( array( 'public' => true ), 'objects' );
-
-		echo '<input type="hidden" name="' . esc_attr( self::OPTION ) . '[post_types][]" value="">';
-		echo '<fieldset class="ogify-checkboxes">';
-
-		foreach ( $post_types as $post_type ) {
-			$name  = $post_type->name;
-			$label = $post_type->labels->singular_name ? $post_type->labels->singular_name : $post_type->label;
-
-			printf(
-				'<label><input type="checkbox" name="%1$s[post_types][]" value="%2$s" %3$s> %4$s</label>',
-				esc_attr( self::OPTION ),
-				esc_attr( $name ),
-				checked( in_array( $name, $settings['post_types'], true ), true, false ),
-				esc_html( $label )
-			);
-		}
-
-		echo '</fieldset>';
 	}
 
 	/**
@@ -273,6 +362,20 @@ final class Settings {
 		$settings = self::get();
 		$key      = $args['key'];
 		$field_id = 'ogify-' . str_replace( '_', '-', $key );
+
+		if ( ! empty( $args['description_id'] ) && is_scalar( $args['description_id'] ) ) {
+			printf(
+				'<input id="%1$s" type="number" name="%2$s[%3$s]" value="%4$s" min="%5$s" max="%6$s" step="1" class="small-text" aria-describedby="%7$s">',
+				esc_attr( $field_id ),
+				esc_attr( self::OPTION ),
+				esc_attr( $key ),
+				esc_attr( $settings[ $key ] ),
+				esc_attr( $args['min'] ),
+				esc_attr( $args['max'] ),
+				esc_attr( (string) $args['description_id'] )
+			);
+			return;
+		}
 
 		printf(
 			'<input id="%1$s" type="number" name="%2$s[%3$s]" value="%4$s" min="%5$s" max="%6$s" step="1" class="small-text">',
@@ -295,6 +398,18 @@ final class Settings {
 		$settings = self::get();
 		$key      = $args['key'];
 		$field_id = 'ogify-' . str_replace( '_', '-', $key );
+
+		if ( ! empty( $args['description_id'] ) && is_scalar( $args['description_id'] ) ) {
+			printf(
+				'<input id="%1$s" type="text" name="%2$s[%3$s]" value="%4$s" class="regular-text" aria-describedby="%5$s">',
+				esc_attr( $field_id ),
+				esc_attr( self::OPTION ),
+				esc_attr( $key ),
+				esc_attr( $settings[ $key ] ),
+				esc_attr( (string) $args['description_id'] )
+			);
+			return;
+		}
 
 		printf(
 			'<input id="%1$s" type="text" name="%2$s[%3$s]" value="%4$s" class="regular-text">',
@@ -338,7 +453,7 @@ final class Settings {
 			'gradient' => __( 'Gradient', 'ogify' ),
 		);
 
-		echo '<fieldset class="ogify-radios">';
+		echo '<div class="ogify-radios">';
 
 		foreach ( $options as $value => $label ) {
 			printf(
@@ -350,7 +465,7 @@ final class Settings {
 			);
 		}
 
-		echo '</fieldset>';
+		echo '</div>';
 	}
 
 	/**
@@ -358,10 +473,12 @@ final class Settings {
 	 *
 	 * @return void
 	 */
-	public static function render_media_field(): void {
-		$settings      = self::get();
-		$attachment_id = absint( $settings['default_author_photo'] );
-		$image         = $attachment_id ? wp_get_attachment_image( $attachment_id, 'thumbnail', false, array( 'alt' => esc_attr__( 'Default author photo preview', 'ogify' ) ) ) : '';
+	public static function render_media_field( array $args = array() ): void {
+		$settings       = self::get();
+		$attachment_id  = absint( $settings['default_author_photo'] );
+		$image          = $attachment_id ? wp_get_attachment_image( $attachment_id, 'thumbnail', false, array( 'alt' => __( 'Default author photo preview', 'ogify' ) ) ) : '';
+		$description_id = 'ogify-default-author-photo-description';
+		$active_source  = ! empty( $args['active_source'] ) && is_scalar( $args['active_source'] ) ? (string) $args['active_source'] : 'none';
 
 		echo '<div class="ogify-media-field" data-ogify-media-field>';
 		printf(
@@ -373,16 +490,19 @@ final class Settings {
 
 		if ( $image ) {
 			echo wp_kses_post( $image );
+		} else {
+			echo '<span class="ogify-media-empty">' . esc_html__( 'No image selected', 'ogify' ) . '</span>';
 		}
 
 		echo '</div>';
 		echo '<div class="ogify-media-actions">';
 		printf(
-			'<button type="button" class="button" data-ogify-media-select data-title="%1$s" data-button="%2$s" data-alt="%3$s">%4$s</button>',
+			'<button type="button" class="button" data-ogify-media-select data-title="%1$s" data-button="%2$s" data-alt="%3$s" aria-describedby="%5$s">%4$s</button>',
 			esc_attr__( 'Choose default author photo', 'ogify' ),
 			esc_attr__( 'Use this image', 'ogify' ),
 			esc_attr__( 'Selected author photo', 'ogify' ),
-			esc_html__( 'Choose Image', 'ogify' )
+			esc_html__( 'Choose Image', 'ogify' ),
+			esc_attr( $description_id )
 		);
 		printf(
 			'<button type="button" class="button" data-ogify-media-remove%1$s>%2$s</button>',
@@ -391,5 +511,29 @@ final class Settings {
 		);
 		echo '</div>';
 		echo '</div>';
+		echo '<p id="' . esc_attr( $description_id ) . '" class="description">' . esc_html__( 'Used only when an author has no profile photo and no Gravatar.', 'ogify' ) . '</p>';
+		$active_message = sprintf(
+			/* translators: %s: avatar source currently active for the logged-in user. */
+			esc_html__( 'Active for you right now: %s', 'ogify' ),
+			'<strong>' . esc_html( self::avatar_source_label( $active_source ) ) . '</strong>'
+		);
+		echo '<p class="description ogify-active-source">' . wp_kses( $active_message, array( 'strong' => array() ) ) . '</p>';
+	}
+
+	/**
+	 * Get the human label for an avatar source.
+	 *
+	 * @param string $source Avatar source.
+	 * @return string
+	 */
+	private static function avatar_source_label( string $source ): string {
+		$labels = array(
+			'profile'  => __( 'Your OGify profile photo', 'ogify' ),
+			'gravatar' => __( 'Your Gravatar', 'ogify' ),
+			'default'  => __( 'This site default', 'ogify' ),
+			'none'     => __( 'No photo', 'ogify' ),
+		);
+
+		return isset( $labels[ $source ] ) ? $labels[ $source ] : $labels['none'];
 	}
 }

@@ -103,6 +103,23 @@ final class CardImage {
 	}
 
 	/**
+	 * Resolve the avatar branch used by the renderer.
+	 *
+	 * @param int $user_id User ID.
+	 * @return string
+	 */
+	public function resolve_avatar_source( int $user_id ): string {
+		try {
+			$avatar = $this->resolve_avatar( $user_id, Settings::get() );
+			$source = isset( $avatar['source'] ) ? (string) $avatar['source'] : 'none';
+
+			return in_array( $source, array( 'profile', 'gravatar', 'default', 'none' ), true ) ? $source : 'none';
+		} catch ( \Throwable $error ) {
+			return 'none';
+		}
+	}
+
+	/**
 	 * Resolve WordPress data before passing it to GD.
 	 *
 	 * @param int $post_id Post ID.
@@ -516,6 +533,7 @@ final class CardImage {
 			'id_or_url' => '',
 			'mtime'     => 0,
 			'bytes'     => '',
+			'source'    => 'none',
 		);
 
 		if ( empty( $settings['show_author_photo'] ) ) {
@@ -523,7 +541,7 @@ final class CardImage {
 		}
 
 		$photo_id = Profile::photo_attachment_id( $author_id );
-		$source   = $this->attachment_avatar( $photo_id );
+		$source   = $this->attachment_avatar( $photo_id, 'profile' );
 		if ( $source ) {
 			return $source;
 		}
@@ -538,7 +556,7 @@ final class CardImage {
 			}
 		}
 
-		$source = $this->attachment_avatar( absint( $settings['default_author_photo'] ) );
+		$source = $this->attachment_avatar( absint( $settings['default_author_photo'] ), 'default' );
 
 		return $source ? $source : $empty;
 	}
@@ -546,10 +564,11 @@ final class CardImage {
 	/**
 	 * Load an attachment avatar.
 	 *
-	 * @param int $attachment_id Attachment ID.
+	 * @param int    $attachment_id Attachment ID.
+	 * @param string $source Source label.
 	 * @return array|false
 	 */
-	private function attachment_avatar( int $attachment_id ) {
+	private function attachment_avatar( int $attachment_id, string $source ) {
 		if ( ! $attachment_id ) {
 			return false;
 		}
@@ -568,6 +587,7 @@ final class CardImage {
 			'id_or_url' => 'attachment:' . $attachment_id,
 			'mtime'     => filemtime( $path ) ? filemtime( $path ) : 0,
 			'bytes'     => $bytes,
+			'source'    => $source,
 		);
 	}
 
@@ -601,6 +621,7 @@ final class CardImage {
 			'id_or_url' => $url,
 			'mtime'     => 0,
 			'bytes'     => $bytes,
+			'source'    => 'gravatar',
 		);
 	}
 
