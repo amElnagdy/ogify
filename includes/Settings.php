@@ -52,6 +52,24 @@ final class Settings {
 		add_action( 'admin_menu', array( __CLASS__, 'add_page' ) );
 		add_action( 'admin_init', array( __CLASS__, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue_assets' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( OGIFY_FILE ), array( __CLASS__, 'add_settings_link' ) );
+	}
+
+	/**
+	 * Add a Settings link to the plugin's row on the Plugins screen.
+	 *
+	 * @param array $links Existing plugin action links.
+	 * @return array
+	 */
+	public static function add_settings_link( array $links ): array {
+		$settings_link = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'options-general.php?page=ogify' ) ),
+			esc_html__( 'Settings', 'ogify' )
+		);
+		array_unshift( $links, $settings_link );
+
+		return $links;
 	}
 
 	/**
