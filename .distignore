@@ -1,11 +1,20 @@
+# Directories and files to omit from the WordPress.org SVN repo.
+.distignore
+.gitignore
 .git
 .github
-.gitignore
-.distignore
-.dev
+.wordpress-org
+.editorconfig
+.DS_Store
+Thumbs.db
 node_modules
+README.md
 AGENTS.md
 OGIFY-SPEC.md
+.dev
 *.design.md
 *-design.md
 DESIGN*.md
+*.zip
+*.tar.gz
+*~

@@ -1,2 +1,15 @@
+# OS files
 .DS_Store
+Thumbs.db
+
+# Editors / IDEs
+.idea/
+.vscode/
+*.swp
+
+# Local dev scratch — briefs, mockups, asset sources, plans (not plugin files)
 .dev/
+
+# Build artifacts
+*.zip
+*.tar.gz
