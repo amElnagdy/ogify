@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-21T12:41:40+00:00\n"
+"POT-Creation-Date: 2026-06-27T17:14:53+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: ogify\n"
@@ -65,148 +65,206 @@ msgid "Choose OGify share photo"
 msgstr ""
 
 #: includes/Profile.php:70
-#: includes/Settings.php:175
-#: includes/Settings.php:383
+#: includes/Settings.php:179
+#: includes/Settings.php:557
 msgid "Use this image"
 msgstr ""
 
 #: includes/Profile.php:72
-#: includes/Settings.php:385
+#: includes/Settings.php:559
 msgid "Choose Image"
 msgstr ""
 
 #: includes/Profile.php:77
-#: includes/Settings.php:390
+#: includes/Settings.php:565
 msgid "Remove"
 msgstr ""
 
-#: includes/Settings.php:63
-#: includes/Settings.php:64
-#: includes/Settings.php:192
+#: includes/Settings.php:68
+msgid "Settings"
+msgstr ""
+
+#: includes/Settings.php:82
+#: includes/Settings.php:83
+#: includes/Settings.php:201
 msgid "OGify"
 msgstr ""
 
-#: includes/Settings.php:87
-msgid "General"
-msgstr ""
-
-#: includes/Settings.php:88
-msgid "Card Content"
-msgstr ""
-
-#: includes/Settings.php:89
-msgid "Design"
-msgstr ""
-
-#: includes/Settings.php:91
-msgid "Enabled"
-msgstr ""
-
-#: includes/Settings.php:91
-msgid "Generate Open Graph images"
-msgstr ""
-
-#: includes/Settings.php:92
-msgid "Post Types"
-msgstr ""
-
-#: includes/Settings.php:93
-msgid "Reading Speed"
-msgstr ""
-
-#: includes/Settings.php:95
-msgid "Author Photo"
-msgstr ""
-
-#: includes/Settings.php:95
-msgid "Show the author photo"
-msgstr ""
-
-#: includes/Settings.php:96
-msgid "Author Name"
-msgstr ""
-
-#: includes/Settings.php:96
-msgid "Show the author name"
-msgstr ""
-
-#: includes/Settings.php:97
-msgid "Reading Time"
-msgstr ""
-
-#: includes/Settings.php:97
-msgid "Show the reading time"
-msgstr ""
-
-#: includes/Settings.php:98
-msgid "Site Name"
-msgstr ""
-
-#: includes/Settings.php:98
-msgid "Show the site name"
-msgstr ""
-
-#: includes/Settings.php:99
-msgid "Site Name Text"
-msgstr ""
-
-#: includes/Settings.php:100
-msgid "Default Author Photo"
-msgstr ""
-
-#: includes/Settings.php:102
-msgid "Background Type"
-msgstr ""
-
-#: includes/Settings.php:103
-msgid "Background Color"
-msgstr ""
-
-#: includes/Settings.php:104
-msgid "Gradient Start"
-msgstr ""
-
-#: includes/Settings.php:105
-msgid "Gradient End"
-msgstr ""
-
-#: includes/Settings.php:106
-msgid "Text Color"
-msgstr ""
-
-#: includes/Settings.php:107
-msgid "Accent Color"
-msgstr ""
-
-#: includes/Settings.php:174
+#: includes/Settings.php:178
 msgid "Choose author photo"
 msgstr ""
 
-#: includes/Settings.php:176
-#: includes/Settings.php:384
+#: includes/Settings.php:180
+#: includes/Settings.php:558
 msgid "Selected author photo"
 msgstr ""
 
-#: includes/Settings.php:198
+#: includes/Settings.php:181
+#: includes/Settings.php:549
+msgid "No image selected"
+msgstr ""
+
+#: includes/Settings.php:208
+msgid "General"
+msgstr ""
+
+#: includes/Settings.php:215
+msgid "Generate Open Graph share cards"
+msgstr ""
+
+#: includes/Settings.php:219
+msgid "Creates a 1200x630 card when posts are shared."
+msgstr ""
+
+#: includes/Settings.php:224
+msgid "Reading speed"
+msgstr ""
+
+#: includes/Settings.php:233
+msgid "Words per minute — used to estimate reading time."
+msgstr ""
+
+#: includes/Settings.php:238
+msgid "Card content"
+msgstr ""
+
+#: includes/Settings.php:240
+msgid "Show on the card"
+msgstr ""
+
+#: includes/Settings.php:242
+msgid "Show the author photo"
+msgstr ""
+
+#: includes/Settings.php:243
+msgid "Show the author name"
+msgstr ""
+
+#: includes/Settings.php:244
+msgid "Show the reading time"
+msgstr ""
+
+#: includes/Settings.php:245
+msgid "Show the site name"
+msgstr ""
+
+#: includes/Settings.php:251
+msgid "Site name"
+msgstr ""
+
+#: includes/Settings.php:258
+msgid "Overrides the site title shown on the card."
+msgstr ""
+
+#: includes/Settings.php:262
+msgid "Default Author Photo"
+msgstr ""
+
+#: includes/Settings.php:268
+msgid "Design"
+msgstr ""
+
+#: includes/Settings.php:270
+msgid "Card template"
+msgstr ""
+
+#: includes/Settings.php:275
+msgid "Background type"
+msgstr ""
+
+#: includes/Settings.php:284
+msgid "Background color"
+msgstr ""
+
+#: includes/Settings.php:295
+msgid "Gradient start"
+msgstr ""
+
+#: includes/Settings.php:299
+msgid "Gradient end"
+msgstr ""
+
+#: includes/Settings.php:306
+msgid "Title & body text"
+msgstr ""
+
+#: includes/Settings.php:311
+msgid "Reading-time tag / accents"
+msgstr ""
+
+#: includes/Settings.php:320
 msgid "Preview"
 msgstr ""
 
-#: includes/Settings.php:202
+#: includes/Settings.php:323
+msgid "Preview unavailable because the GD image library is missing."
+msgstr ""
+
+#: includes/Settings.php:331
 msgid "OGify preview image"
 msgstr ""
 
-#: includes/Settings.php:337
+#: includes/Settings.php:336
+msgid "Preview unavailable right now."
+msgstr ""
+
+#: includes/Settings.php:339
+msgid "This reflects your saved settings. Save changes to regenerate."
+msgstr ""
+
+#: includes/Settings.php:340
+msgid "1200 x 630 — used by Facebook, X and LinkedIn."
+msgstr ""
+
+#: includes/Settings.php:479
 msgid "Solid"
 msgstr ""
 
-#: includes/Settings.php:338
+#: includes/Settings.php:480
 msgid "Gradient"
 msgstr ""
 
-#: includes/Settings.php:364
+#: includes/Settings.php:506
+msgid "Classic"
+msgstr ""
+
+#: includes/Settings.php:507
+msgid "Centered"
+msgstr ""
+
+#: includes/Settings.php:508
+msgid "Minimal"
+msgstr ""
+
+#: includes/Settings.php:534
 msgid "Default author photo preview"
 msgstr ""
 
-#: includes/Settings.php:382
+#: includes/Settings.php:556
 msgid "Choose default author photo"
+msgstr ""
+
+#: includes/Settings.php:569
+msgid "Used only when an author has no profile photo and no Gravatar."
+msgstr ""
+
+#. translators: %s: avatar source currently active for the logged-in user.
+#: includes/Settings.php:572
+msgid "Active for you right now: %s"
+msgstr ""
+
+#: includes/Settings.php:586
+msgid "Your OGify profile photo"
+msgstr ""
+
+#: includes/Settings.php:587
+msgid "Your Gravatar"
+msgstr ""
+
+#: includes/Settings.php:588
+msgid "This site default"
+msgstr ""
+
+#: includes/Settings.php:589
+msgid "No photo"
 msgstr ""

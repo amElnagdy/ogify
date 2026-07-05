@@ -8,7 +8,7 @@ Copy this folder to `wp-content/plugins/ogify`, then activate **OGify – Dynami
 
 ## Settings
 
-Open **Settings > OGify** to configure post types, author photo/name visibility, reading time, site name text, background colors, text color, accent color, reading speed, and a default author photo. Per-user OGify share photos live on each user profile screen.
+Open **Settings > OGify** to configure the card template (Classic, Centered, or Minimal), author photo/name visibility, reading time, site name text, a solid or gradient background, text and accent colors, reading speed, and a default author photo. Per-user OGify share photos live on each user profile screen.
 
 Generated images are cached in `uploads/ogify` and refresh when post content or card settings change.
 
